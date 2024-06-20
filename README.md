@@ -35,6 +35,7 @@ Y un panel de administracion donde podemos agregar credenciales nuevas para estu
 1. Asegurate de tener un servidor SQL https://dev.mysql.com/downloads/installer/
 2. Crea una base de datos con el nombre de tu preferencia. 
 3. Crea o modifica el archivo .env.example a solo .env y llena las variables DB_USER, DB_PASSWORD y DB_NAME con los valores necesarios.
+4. Instalar Node.js https://nodejs.org/en
 
 ### Installation
 
