@@ -1,5 +1,4 @@
 import express from 'express';
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models.js';
 
@@ -10,10 +9,9 @@ router.post('/register', async (req, res) => {
   const { username, password, role } = req.body;
   
   try {  
-    // Create the user with hashed password (handled in beforeCreate hook)
     const user = await User.create({
       username,
-      password, // Already hashed in beforeCreate hook
+      password, 
       role
     });
     
