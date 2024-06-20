@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import decodeToken from '../utils/decodeToken';
+import './StudentView.css'; 
 
 function StudentView() {
   const [notes, setNotes] = useState([]);
