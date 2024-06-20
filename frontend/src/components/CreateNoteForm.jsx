@@ -1,42 +1,24 @@
-import { useState, useEffect } from 'react';
-import axiosInstance from '../api/axiosInstance'; 
+import { useState, useEffect  } from 'react';
+import axiosInstance from '../api/axiosInstance';
 import decodeToken from '../utils/decodeToken';
 
-const CreateNoteForm = ({ fetchNotes }) => {
-  const [note1, setNote1] = useState('');
-  const [note2, setNote2] = useState('');
-  const [note3, setNote3] = useState('');
-  const [subject, setSubject] = useState('');
-  const [studentId, setStudentId] = useState('');
-  const [error, setError] = useState('');
+function CreateNoteForm({ fetchNotes, onCancel }) {
   const [students, setStudents] = useState([]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('token');
-    const teacherId = decodeToken(token).id; 
-    try {
-      await axiosInstance.post('/notes', {
-        note1,
-        note2,
-        note3,
-        subject,
-        studentId,
-        teacherId
-      });
-      fetchNotes();
-      setNote1('');
-      setNote2('');
-      setNote3('');
-      setSubject('');
-      setStudentId('');
-    } catch (error) {
-      console.error('Error creating note:', error.response.data.error);
-      setError('Failed to create the note. Please try again.');
-    }
-  };
+  
+  const [note, setNote] = useState({
+    studentId: '',
+    teacherId: '',
+    subject: '',
+    note1: '',
+    note2: '',
+    note3: '',
+    finalNote: ''
+  });
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    const teacherId = decodeToken(token).id; 
+    setNote(prevNote => ({ ...prevNote, teacherId }));
     const fetchStudents = async () => {
       try {
         const response = await axiosInstance.get('/users/students');
@@ -50,24 +32,32 @@ const CreateNoteForm = ({ fetchNotes }) => {
     fetchStudents();
   }, []);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNote((prevNote) => ({
+      ...prevNote,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axiosInstance.post('/notes', note);
+      fetchNotes();
+      onCancel(); // Hide the create form
+    } catch (error) {
+      console.error('Error creating note:', error);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit}>
-      <label>
-        Note 1:
-        <input type="number" value={note1} onChange={(e) => setNote1(e.target.value)} />
-      </label>
-      <label>
-        Note 2:
-        <input type="number" value={note2} onChange={(e) => setNote2(e.target.value)} />
-      </label>
-      <label>
-        Note 3:
-        <input type="number" value={note3} onChange={(e) => setNote3(e.target.value)} />
-      </label>
+      <h2>Create Note</h2>
       <select
         name="studentId"
-        value={studentId}
-        onChange={(e) => setStudentId(e.target.value)}
+        value={note.studentId}
+        onChange={handleChange}
         required
       >
         <option value="">Select Student</option>
@@ -79,12 +69,24 @@ const CreateNoteForm = ({ fetchNotes }) => {
       </select>
       <label>
         Subject:
-        <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} />
+        <input type="text" name="subject" value={note.subject} onChange={handleChange} />
       </label>
-      <button type="submit">Create Note</button>
-      {error && <p>{error}</p>}
+      <label>
+        Note 1:
+        <input type="text" name="note1" value={note.note1} onChange={handleChange} />
+      </label>
+      <label>
+        Note 2:
+        <input type="text" name="note2" value={note.note2} onChange={handleChange} />
+      </label>
+      <label>
+        Note 3:
+        <input type="text" name="note3" value={note.note3} onChange={handleChange} />
+      </label>
+      <button type="submit">Save</button>
+      <button type="button" onClick={onCancel}>Cancel</button>
     </form>
   );
-};
+}
 
 export default CreateNoteForm;

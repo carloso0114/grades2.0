@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import decodeToken from '../utils/decodeToken';
-import './StudentView.css'; 
+import styles from './StudentView.module.css'; // Import the CSS module
 
 function StudentView() {
   const [notes, setNotes] = useState([]);
@@ -38,26 +38,29 @@ function StudentView() {
     <div>
       <h1>Your Notes</h1>
       {notes.length === 0 ? (
-        <p>No notes available</p>
+        <p className={styles.noNotesMessage}>No notes available</p>
       ) : (
-        <table>
+        <table className={styles.table}>
           <thead>
             <tr>
-              <th>Subject</th>
-              <th>Note 1</th>
-              <th>Note 2</th>
-              <th>Note 3</th>
-              <th>Final Note</th>
+              <th className={styles.th}>Subject</th>
+              <th className={styles.th}>Note 1</th>
+              <th className={styles.th}>Note 2</th>
+              <th className={styles.th}>Note 3</th>
+              <th className={styles.th}>Final Note</th>
             </tr>
           </thead>
           <tbody>
-            {notes.map((note) => (
-              <tr key={note.id}>
-                <td>{note.subject}</td>
-                <td>{note.note1}</td>
-                <td>{note.note2}</td>
-                <td>{note.note3}</td>
-                <td>{note.finalNote}</td>
+            {notes.map((note, index) => (
+              <tr
+                key={note.id}
+                className={index % 2 === 0 ? '' : styles.tbodyTrOdd}
+              >
+                <td className={styles.td}>{note.subject}</td>
+                <td className={styles.td}>{note.note1}</td>
+                <td className={styles.td}>{note.note2}</td>
+                <td className={styles.td}>{note.note3}</td>
+                <td className={styles.td}>{note.finalNote}</td>
               </tr>
             ))}
           </tbody>
