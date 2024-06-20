@@ -10,9 +10,8 @@ Una aplicacion web construida con Vite+React y MySQL con acciones REST y autenti
   - [About](#about)
   - [Features](#features)
   - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
     - [Installation](#installation)
-  - [Usage](#usage)
+    - [Usage](#usage)
   - [Contact](#contact)
 
 ## About

@@ -11,7 +11,7 @@ const AdminView = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axiosInstance.get('http://localhost:3000/api/users'); 
+      const response = await axiosInstance.get('users'); 
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -20,7 +20,7 @@ const AdminView = () => {
 
   const createUser = async () => {
     try {
-      const response = await axiosInstance.post('http://localhost:3000/api/users', newUser); 
+      const response = await axiosInstance.post('users', newUser); 
       setUsers([...users, response.data]);
       setNewUser({ username: '', password: '', role: 'student' }); 
     } catch (error) {
