@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Importing Route is necessary for routing setup
-import ProtectedRoute from './components/ProtectedRoute'; // Adjust the path based on your actual structure
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; 
+import ProtectedRoute from './components/ProtectedRoute'; 
 import Login from './pages/Login';
 import StudentView from './pages/StudentView';
 import TeacherView from './pages/TeacherView';

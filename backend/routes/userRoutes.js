@@ -1,10 +1,11 @@
 import express from 'express';
 import { User } from '../models.js'
+import authenticateJWT from '../middlewares/auth.js';
 
 const userRoutes = express.Router();
 
 // GET all users
-userRoutes.get('/', async (req, res) => {
+userRoutes.get('/', authenticateJWT, async (req, res) => {
   try {
     const users = await User.findAll();
     res.json(users);
@@ -14,8 +15,22 @@ userRoutes.get('/', async (req, res) => {
   }
 });
 
+// GET all students
+userRoutes.get('/students', authenticateJWT, async (req, res) => {
+  try {
+    const students = await User.findAll({
+      where: { role: 'student' },
+      attributes: ['id', 'username']
+    });
+    res.json(students);
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({ error: 'Failed to fetch students' });
+  }
+});
+
 // GET user by ID
-userRoutes.get('/:id', async (req, res) => {
+userRoutes.get('/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
   try {
     const user = await User.findByPk(id);
@@ -30,7 +45,7 @@ userRoutes.get('/:id', async (req, res) => {
 });
 
 // CREATE a new user
-userRoutes.post('/', async (req, res) => {
+userRoutes.post('/', authenticateJWT, async (req, res) => {
   const { username, role, password } = req.body;
 
   if (!['student', 'teacher', 'admin'].includes(role)) {
@@ -51,7 +66,7 @@ userRoutes.post('/', async (req, res) => {
 });
 
 // UPDATE user by ID
-userRoutes.put('/:id', async (req, res) => {
+userRoutes.put('/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
   const { username, email, password } = req.body;
   try {
@@ -72,7 +87,7 @@ userRoutes.put('/:id', async (req, res) => {
 });
 
 // DELETE user by ID
-userRoutes.delete('/:id', async (req, res) => {
+userRoutes.delete('/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
   try {
     const user = await User.findByPk(id);

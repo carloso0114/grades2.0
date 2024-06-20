@@ -29,6 +29,7 @@ Y un panel de administracion donde podemos agregar credenciales nuevas para estu
 -Se mantiene la sesion del usuario por navegador usando localStorage
 -Se protegen las rutas en el frontend para que no puedan navegar por donde no se supone que deban.
 -Se protegen los endpoints de el servidor para que tampoco puedan manipular los datos de las tablas sin haber iniciado sesion.
+-Campos de formulario requeridos.
 
 ## Getting Started
 
