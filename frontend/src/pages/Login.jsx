@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
+import styles from './Login.module.css';
 
 function Login() {
   const navigate = useNavigate();
@@ -74,20 +75,20 @@ function Login() {
   };
 
   return (
-    <div>
+    <div className={styles.container}>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
-        <div>
-          <label htmlFor="username">Username:</label>
-          <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <div className={styles.formGroup}>
+          <label className={styles.label} htmlFor="username">Username:</label>
+          <input className={styles.input} type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
         </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className={styles.formGroup}>
+          <label className={styles.label} htmlFor="password">Password:</label>
+          <input className={styles.input} type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
-        <button type="submit">Login</button>
+        <button className={styles.button} type="submit">Login</button>
       </form>
-      {error && <p>{error}</p>}
+      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 }

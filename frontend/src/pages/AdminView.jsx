@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance';
+import styles from './AdminView.module.css';
 
 const AdminView = () => {
   const [users, setUsers] = useState([]);
@@ -38,15 +39,14 @@ const AdminView = () => {
   };
 
   return (
-    <div>
+<div className={styles.container}>
       <h1>Admin View</h1>
 
       {/* Form for creating new user */}
-      <form onSubmit={(e) => { e.preventDefault(); createUser(); }}>
+      <form className={styles.form} onSubmit={(e) => { e.preventDefault(); createUser(); }}>
         <input type="text" value={newUser.username} onChange={(e) => setNewUser({ ...newUser, username: e.target.value })} placeholder="Username" required />
         <input type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} placeholder="Password" required />
-        <select name="role" value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })} required
-        >
+        <select name="role" value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })} required>
           <option value="student">Student</option>
           <option value="teacher">Teacher</option>
           <option value="admin">Admin</option>
@@ -55,15 +55,27 @@ const AdminView = () => {
       </form>
 
       {/* List of users */}
-      <ul>
-        {users.map(user => (
-          <li key={user.id}>
-            {user.username} ({user.role})
-            <button onClick={() => deleteUser(user.id)}>Delete</button>
-            {/* Add edit functionality if needed */}
-          </li>
-        ))}
-      </ul>
+      <table className={styles.table}>
+        <thead>
+          <tr className={styles.tr}>
+            <th className={styles.th}>Username</th>
+            <th className={styles.th}>Role</th>
+            <th className={styles.th}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map(user => (
+            <tr key={user.id} className={styles.tr}>
+              <td className={styles.td}>{user.username}</td>
+              <td className={styles.td}>{user.role}</td>
+              <td className={styles.td}>
+                <button className={styles.button} onClick={() => deleteUser(user.id)}>Delete</button>
+                {/* Add edit functionality if needed */}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
