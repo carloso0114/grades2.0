@@ -6,6 +6,12 @@ const userRoutes = express.Router();
 
 // GET all users
 userRoutes.get('/', authenticateJWT, async (req, res) => {
+  const { role } = req.user;
+
+  // if user is a student
+  if (role === 'student' || role === 'teacher') {
+    return res.status(403).json({ message: 'You are not allowed to check on users' });
+  }
   try {
     const users = await User.findAll();
     res.json(users);
@@ -15,8 +21,13 @@ userRoutes.get('/', authenticateJWT, async (req, res) => {
   }
 });
 
-// GET all students
+// GET all students so we can list them in the form in front-end
 userRoutes.get('/students', authenticateJWT, async (req, res) => {
+  const { role } = req.user;
+
+  if (role === 'student') {
+    return res.status(403).json({ message: 'You are not allowed to check on this action' });
+  }
   try {
     const students = await User.findAll({
       where: { role: 'student' },
@@ -32,6 +43,12 @@ userRoutes.get('/students', authenticateJWT, async (req, res) => {
 // GET user by ID
 userRoutes.get('/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
+  const { role } = req.user;
+
+  if (role === 'student') {
+    return res.status(403).json({ message: 'You are not allowed to use this action' });
+  }
+
   try {
     const user = await User.findByPk(id);
     if (!user) {
@@ -47,7 +64,12 @@ userRoutes.get('/:id', authenticateJWT, async (req, res) => {
 // CREATE a new user
 userRoutes.post('/', authenticateJWT, async (req, res) => {
   const { username, role, password } = req.body;
+  const user_role = req.user.role;
 
+  if (user_role === 'student') {
+    return res.status(403).json({ message: 'Students are not allowed to use this action' });
+  }
+  
   if (!['student', 'teacher', 'admin'].includes(role)) {
     return res.status(400).json({ error: 'Invalid role. Role must be one of: student, teacher, admin' });
   }
@@ -69,6 +91,12 @@ userRoutes.post('/', authenticateJWT, async (req, res) => {
 userRoutes.put('/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
   const { username, email, password } = req.body;
+  const { role } = req.user;
+
+  if (role === 'student') {
+    return res.status(403).json({ message: 'You are not allowed to use this action' });
+  }
+
   try {
     const user = await User.findByPk(id);
     if (!user) {
@@ -89,6 +117,12 @@ userRoutes.put('/:id', authenticateJWT, async (req, res) => {
 // DELETE user by ID
 userRoutes.delete('/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
+  const { role } = req.user;
+
+  if (role === 'student') {
+    return res.status(403).json({ message: 'You are not allowed to use this action' });
+  }
+  
   try {
     const user = await User.findByPk(id);
     if (!user) {
