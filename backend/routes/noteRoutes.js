@@ -1,12 +1,19 @@
 import express from 'express';
 import { Notes, User } from '../models.js';
 import authenticateJWT from '../middlewares/auth.js';
+import decodeToken from '../../frontend/src/utils/decodeToken.js';
 
 const router = express.Router();
 
 // CREATE a new note
 router.post('/', authenticateJWT, async (req, res) => {
   const { note1, note2, note3, studentId, subject, teacherId } = req.body;
+  const { role } = req.user;
+
+  // if user is a student
+  if (role === 'student') {
+    return res.status(403).json({ message: 'Students are not allowed to create notes' });
+  }
 
   const cleanedNote = {
     note1: note1 === '' ? null : note1,
@@ -27,6 +34,12 @@ router.post('/', authenticateJWT, async (req, res) => {
 
 // READ all notes
 router.get('/', authenticateJWT, async (req, res) => {
+  const { role } = req.user;
+
+  if (role === 'student') {
+    return res.status(403).json({ message: 'Students are not allowed to get all the grades' });
+  }
+  
   try {
     const notes = await Notes.findAll({
       include: [
@@ -44,14 +57,17 @@ router.get('/', authenticateJWT, async (req, res) => {
 // READ notes by user ID
 router.get('/user/:userId', authenticateJWT, async (req, res) => {
   const { userId } = req.params;
+  const { id } = req.user;
+
+  if (id !== parseInt(userId, 10)) {
+    return res.status(403).json({ message: 'You cannot check on others\' grades' });
+  }
   try {
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ error: `Student not found with id ${userId}` });
     }
-    if (user.role !== 'student') {
-      return res.status(400).json({ error: 'User is not a student' });
-    }
+
     const notes = await Notes.findAll({
       where: { studentId: userId },
       include: [
@@ -60,7 +76,7 @@ router.get('/user/:userId', authenticateJWT, async (req, res) => {
       ]
     });
     if (notes.length === 0) {
-      return res.json({ message: "You don't have any grades yet." }); // Adjust message as needed
+      return res.json({ message: "You don't have any grades yet." });
     }
     res.json(notes);
   } catch (error) {
@@ -73,6 +89,12 @@ router.get('/user/:userId', authenticateJWT, async (req, res) => {
 router.patch('/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
   const { note1, note2, note3, studentId, subject, teacherId } = req.body;
+  const { role } = req.user;
+
+  // if user is a student
+  if (role === 'student') {
+    return res.status(403).json({ message: 'Students are not allowed to update notes' });
+  }
 
   // Convert empty string values to null
   const cleanedNote = {
@@ -105,6 +127,11 @@ router.patch('/:id', authenticateJWT, async (req, res) => {
 
 // DELETE a note
 router.delete('/:id', authenticateJWT, async (req, res) => {
+  const { role } = req.user;
+  // if user is a student
+  if (role === 'student') {
+    return res.status(403).json({ message: 'Students are not allowed to delete notes' });
+  }
   const { id } = req.params;
   try {
     const note = await Notes.findByPk(id);
